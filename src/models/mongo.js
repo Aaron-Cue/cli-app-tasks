@@ -21,8 +21,12 @@ export default class TaskModel {
     }
   }
 
-  static async getTasks() {
+  static async getTasks({limit}) {
     try {
+      if (limit) {
+        const tasks = await Task.find().limit(limit)
+        return tasks
+      }
       const tasks = await Task.find()
       return tasks
     } catch (error) {
@@ -32,8 +36,9 @@ export default class TaskModel {
 
   static async getTask({ id }) {
     try {
-      const task = await Task.findOne({ id })
-      console.log(task)
+      id = id = new ObjectId(id)
+      const task = await Task.findOne({ _id: id })
+      return [task]
     } catch (error) {
       console.error('Error deleting task: ', error)
     }
@@ -47,7 +52,7 @@ export default class TaskModel {
         id,
         { title, description },
         { new: true }
-      ) // busca por id, actualiza y devuelve
+      ) 
       return [res]
     } catch (error) {
       console.error('Error updating task: ', error)
@@ -64,5 +69,3 @@ export default class TaskModel {
     }
   }
 }
-
-// 678c4ea66201767e299748f6
