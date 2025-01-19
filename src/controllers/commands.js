@@ -22,11 +22,42 @@ export function startCli() {
       },
     ])
 
-    TaskModel.saveTask({ task: answers })
+    const taskFormatted = await TaskModel.saveTask({ task: answers })
+    console.log('Task saved successfully: ')
+    console.table(
+      taskFormatted.map(({ _id, title, description, createdAt }) => ({
+        _id: _id.toString(),
+        title,
+        description,
+        createdAt: new Date(createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }),
+      }))
+    )
   })
 
   program.command('list').action(async () => {
-    TaskModel.getTasks()
+    const tasksFormatted = await TaskModel.getTasks()
+    console.table(
+      tasksFormatted.map(({ _id, title, description, createdAt }) => ({
+        _id: _id.toString(),
+        title,
+        description,
+        createdAt: new Date(createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }),
+      }))
+    )
   })
 
   program.command('update').action(async () => {
@@ -48,7 +79,23 @@ export function startCli() {
       },
     ])
 
-    TaskModel.updateTask({ task: answers, id: answers.id })
+    const res = await TaskModel.updateTask({ task: answers, id: answers.id })
+    console.log('task updated successfully: ')
+    console.table(
+      res.map(({ _id, title, description, createdAt }) => ({
+        _id: _id.toString(),
+        title,
+        description,
+        createdAt: new Date(createdAt).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }),
+      }))
+    )
   })
 
   program.command('delete').action(async () => {
@@ -58,7 +105,9 @@ export function startCli() {
       message: 'Enter task id to delete: ',
     })
 
-    TaskModel.deleteTask({ id })
+    const res = await TaskModel.deleteTask({ id })
+    if (res.deletedCount >= 1) console.log('Task deleted successfully')
+    else console.log('Task not found')
   })
 
   program.parse(process.argv)
