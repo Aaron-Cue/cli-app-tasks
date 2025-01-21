@@ -2,6 +2,8 @@ import { program } from 'commander'
 import inquirer from 'inquirer'
 import TaskModel from '../models/mongo.js'
 import mongoose from 'mongoose'
+import picolors from 'picocolors'
+import chalk from 'chalk'
 
 export function startCli() {
   // funcion que muestra la tabla de las tareas recibidas
@@ -37,17 +39,18 @@ export function startCli() {
           {
             type: 'input',
             name: 'title',
-            message: 'Enter task title: ',
+            message: chalk.blue('Enter task title: '),
           },
           {
             type: 'input',
             name: 'description',
-            message: 'Enter task description: ',
+            message: chalk.blue('Enter task description: '),
           },
         ])
 
         const tasks = await TaskModel.saveTask({ task: answers })
-        console.log('Task saved successfully: ')
+        console.log(picolors.green(picolors.bold('Task saved successfully: ')))
+
         showTasks(tasks)
       } catch (error) {
         console.error('Error saving task: ', error)
@@ -90,17 +93,17 @@ export function startCli() {
           {
             type: 'input',
             name: 'id',
-            message: 'Enter task id to update: ',
+            message: chalk.green('Enter task id to update: '),
           },
           {
             type: 'input',
             name: 'title',
-            message: 'Enter new task title: ',
+            message: chalk.blue('Enter new task title: '),
           },
           {
             type: 'input',
             name: 'description',
-            message: 'Enter new task description: ',
+            message: chalk.blue('Enter new task description: '),
           },
         ])
 
@@ -109,7 +112,7 @@ export function startCli() {
           id: answers.id,
         })
 
-        console.log('task updated successfully: ')
+        console.log(picolors.cyan('task updated successfully: '))
         showTasks(task)
       } catch (error) {
         console.error('Error updating task: ', error)
@@ -126,13 +129,16 @@ export function startCli() {
         const id = await inquirer.prompt({
           type: 'input',
           name: 'id',
-          message: 'Enter task id to delete: ',
+          message: chalk.red('Enter task id to delete: '),
         })
 
         const res = await TaskModel.deleteTask({ id })
 
-        if (res.deletedCount >= 1) console.log('Task deleted successfully')
-        else console.log('Task not found')
+        if (res.deletedCount >= 1)
+          console.log(
+            picolors.magenta(picolors.bold('Task deleted successfully'))
+          )
+        else console.log(picolors.red('Task not found'))
       } catch (error) {
         console.error('Error deleting task: ', error)
       } finally {

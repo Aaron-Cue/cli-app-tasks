@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { startCli } from './controllers/commands.js'
 import { connectDb } from './models/mongo.js'
 
